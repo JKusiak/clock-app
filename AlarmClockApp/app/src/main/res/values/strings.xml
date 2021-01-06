@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AlarmClockApp</string>
+    <string name="send">Send</string>
+    <string name="receive">receive</string>
 </resources>
