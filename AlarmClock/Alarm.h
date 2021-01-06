@@ -1,7 +1,7 @@
 #ifndef Alarm_h
 #define Alarm_h
 
-#include "pitches.h";
+#include "pitches.h"
 
 class Alarm {
   public:
