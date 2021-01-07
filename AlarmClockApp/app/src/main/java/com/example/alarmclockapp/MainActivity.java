@@ -6,26 +6,29 @@ import androidx.fragment.app.DialogFragment;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
+
+import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
     private EditText hourET;
-    private TextView helloTV;
-    Character helloChar = ' ';
-    String helloString = " ";
+    private TextView alarmList;
+    Date currentTime;
+    String textTime;
+
+    ArrayList<String> waitingAlarmsList = new ArrayList();
 
     // Variables for connection
     String address = null;
@@ -42,22 +45,24 @@ public class MainActivity extends AppCompatActivity {
 
         hourET = findViewById(R.id.hourET);
         hourET.setFocusable(false);
+        currentTime = Calendar.getInstance().getTime();
 
-        helloTV = findViewById(R.id.tvMain);
-        helloString = Character.toString(helloChar);
-        helloTV.setText(helloString);
+        textTime = currentTime.toString();
+        hourET.setText(textTime);
 
+        alarmList = findViewById(R.id.alarmList);
     }
 
+
     public void showTimePicker(View v) {
-        DialogFragment newFragment = new TimePickerFragment(hourET);
+        DialogFragment newFragment = new TimePickerFragment(textTime);
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
     public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-        private EditText text;
+        private String text;
 
-        public TimePickerFragment(EditText v) {
+        public TimePickerFragment(String v) {
             this.text = v;
         }
 
@@ -86,7 +91,10 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 time = "" + hourOfDay + ":" + minute;
             }
-            text.setText(time);
+
+
+            Toast alarmToast = Toast.makeText(getContext(), "Alarm added", Toast.LENGTH_SHORT);
+            alarmToast.show();
         }
     }
 }

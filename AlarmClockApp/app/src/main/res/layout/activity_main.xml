@@ -9,34 +9,47 @@
 
     <EditText
         android:id="@+id/hourET"
-        android:layout_width="120dp"
-        android:layout_height="39dp"
+        android:layout_width="236dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="144dp"
         android:autofillHints=""
         android:ems="10"
+        android:gravity="center"
         android:hint="@string/hour"
         android:inputType="none"
         android:onClick="showTimePicker"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.776" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvMain"
+        android:id="@+id/alarmText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Alarms set:"
         android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.265" />
+        app:layout_constraintTop_toBottomOf="@+id/receiveBtn"
+        app:layout_constraintVertical_bias="0.286" />
+
+    <Button
+        android:id="@+id/receiveBtn"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="@string/receive"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendBtn"
+        app:layout_constraintVertical_bias="0.123" />
 
     <Button
         android:id="@+id/sendBtn"
@@ -47,18 +60,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.559" />
+        app:layout_constraintTop_toBottomOf="@+id/hourET"
+        app:layout_constraintVertical_bias="0.126" />
 
-    <Button
-        android:id="@+id/recieveBtn"
-        android:layout_width="120dp"
+    <TextView
+        android:id="@+id/alarmList"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/receive"
+        android:text="-"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.663" />
+        app:layout_constraintTop_toBottomOf="@+id/alarmText"
+        app:layout_constraintVertical_bias="0.208" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
