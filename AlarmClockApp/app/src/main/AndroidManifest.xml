@@ -19,6 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".DeviceListActivity"
+            android:label="DeviceList">
+        </activity>
+
+        <activity
+            android:name=".ClockActivity"
+            android:label="Clock">
+        </activity>
     </application>
 
 </manifest>

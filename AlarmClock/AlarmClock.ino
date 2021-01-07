@@ -10,19 +10,20 @@ Weather weatherStation(2);
 Clock clock(8, 7, 6);
 Alarm alarm(10, 1, 9);
 AltSoftSerial BTSerial(11, 12); // RX | TX
-char bluetoothData = '0';
+char bluetoothData = 0;
 
 int timePassed = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Arduino is connected to 9600 baud");
-  BTSerial.begin(38400); //HC-05 default baud rate for AT mode
+  
 
   lcd.init();
   lcd.backlight();
 //  clock.SetTimeAndDate(0,24,20,7,24,05,2020);
 }
+
+
 
 void loop() {
   delay(1000);
@@ -31,14 +32,19 @@ void loop() {
 //    Serial.println("Module HC-05 is connected at 38400 baud");
 //  }
   DisplayState();
-//
-//  if (BTSerial.available()) {   // read from HC-05 and send to Arduino Serial Monitor
-//    Serial.write(BTSerial.read());
-//  }
-//  
-//  if (Serial.available()) {   // read from Arduino Serial Monitor and send to HC-05
-//    BTSerial.write(Serial.read());
-//  }
+
+  if (Serial.available() > 0) {
+    bluetoothData = Serial.read();
+    
+    if (bluetoothData == '1') {
+      lcd.setCursor(15, 0);
+      lcd.print(bluetoothData);
+    }
+    else {
+      lcd.setCursor(15, 0);
+      lcd.print("0");
+    }
+  }
   
 //  timePassed += 1;
 //  if(timePassed == 10){
@@ -46,11 +52,22 @@ void loop() {
 //  }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 void DisplayState(){
   lcd.setCursor(0,0);
   lcd.print(clock.ToString());
-  lcd.setCursor(15, 0);
-//  lcd.print(bluetoothData);
   lcd.setCursor(0,1);
   lcd.print(weatherStation.ToString());
 }
