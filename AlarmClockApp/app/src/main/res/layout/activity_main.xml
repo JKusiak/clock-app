@@ -6,75 +6,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
-    <EditText
-        android:id="@+id/hourET"
-        android:layout_width="236dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="144dp"
-        android:autofillHints=""
-        android:ems="10"
+    <TextView
+        android:id="@+id/timeDataArduino"
+        android:layout_width="304dp"
+        android:layout_height="58dp"
         android:gravity="center"
-        android:hint="@string/hour"
-        android:inputType="none"
-        android:onClick="showTimePicker"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF"
+        android:text="Here will be time"
+        android:textColor="#000000"
         android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.068" />
 
     <TextView
-        android:id="@+id/alarmText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Alarms set:"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/receiveBtn"
-        app:layout_constraintVertical_bias="0.286" />
-
-    <Button
-        android:id="@+id/receiveBtn"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="@string/receive"
+        android:id="@+id/weatherDataArduino"
+        android:layout_width="304dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:text="Here will be weather"
+        android:textColor="#000000"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendBtn"
-        app:layout_constraintVertical_bias="0.123" />
+        app:layout_constraintTop_toBottomOf="@+id/timeDataArduino"
+        app:layout_constraintVertical_bias="0.049" />
 
     <Button
         android:id="@+id/sendBtn"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:text="@string/send"
+        android:textColorHighlight="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hourET"
-        app:layout_constraintVertical_bias="0.126" />
+        app:layout_constraintTop_toBottomOf="@+id/weatherDataArduino"
+        app:layout_constraintVertical_bias="0.099" />
+
+    <TimePicker
+        android:id="@+id/alarmTimePicker"
+        android:layout_width="266dp"
+        android:layout_height="136dp"
+        android:layout_weight="0.6"
+        android:timePickerMode="spinner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendBtn"
+        app:layout_constraintVertical_bias="0.103" />
+
+    <Button
+        android:id="@+id/scheduleAlarmBtn"
+        android:layout_width="76dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:text="set"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/alarmTimePicker"
+        app:layout_constraintVertical_bias="0.064" />
 
     <TextView
         android:id="@+id/alarmList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="-"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
+        android:layout_width="335dp"
+        android:layout_height="174dp"
+        android:gravity="center"
+        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarmText"
-        app:layout_constraintVertical_bias="0.208" />
+        app:layout_constraintTop_toBottomOf="@+id/scheduleAlarmBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,11 +5,11 @@ import androidx.fragment.app.DialogFragment;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothSocket;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -18,83 +18,72 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
+import java.util.Locale;
+import java.util.Random;
 
-import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText hourET;
-    private TextView alarmList;
-    Date currentTime;
-    String textTime;
+    TimePicker timePicker;
+    Button scheduleBtn;
+    TextView alarmTextList;
 
-    ArrayList<String> waitingAlarmsList = new ArrayList();
+    ArrayList<Alarm> alarmList = new ArrayList();
 
-    // Variables for connection
-    String address = null;
-    BluetoothAdapter myBluetooth = null;
-    BluetoothSocket btSocket = null;
-    private boolean isBtConnected = false;
-    //SPP UUID. Look for it
-    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+//    // Variables for connection
+//    String address = null;
+//    BluetoothAdapter myBluetooth = null;
+//    BluetoothSocket btSocket = null;
+//    private boolean isBtConnected = false;
+//    //SPP UUID. Look for it
+//    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        hourET = findViewById(R.id.hourET);
-        hourET.setFocusable(false);
-        currentTime = Calendar.getInstance().getTime();
+        timePicker = findViewById(R.id.alarmTimePicker);
+        scheduleBtn = findViewById(R.id.scheduleAlarmBtn);
+        alarmTextList = findViewById(R.id.alarmList);
 
-        textTime = currentTime.toString();
-        hourET.setText(textTime);
+        scheduleBtn.setOnClickListener(new View.OnClickListener() {
 
-        alarmList = findViewById(R.id.alarmList);
-    }
+            @Override
+            public void onClick(View v) {
+                addAlarm();
+                alarmTextList.setText(" ");
+
+                ArrayList<String> allAlarms = new ArrayList();
+
+                for (Alarm alarm : alarmList) {
+                    allAlarms.add(alarm.getHour() + " : " + alarm.getMinute());
+                }
+
+                String allAlarmsAsText = allAlarms.toString();
+
+                alarmTextList.setText(allAlarmsAsText);
+                Toast alarmToast = Toast.makeText(MainActivity.this, "Alarm added", Toast.LENGTH_SHORT);
+                alarmToast.show();
 
 
-    public void showTimePicker(View v) {
-        DialogFragment newFragment = new TimePickerFragment(textTime);
-        newFragment.show(getSupportFragmentManager(), "timePicker");
-    }
-
-    public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-        private String text;
-
-        public TimePickerFragment(String v) {
-            this.text = v;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current time as the default values for the picker
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-
-            // Create a new instance of TimePickerDialog and return it
-            return new TimePickerDialog(getActivity(), this, hour, minute,
-                    DateFormat.is24HourFormat(getActivity()));
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            // Do something with the time chosen by the user
-
-            String time;
-            if (hourOfDay < 10 & minute < 10) {
-                time = "0" + hourOfDay + ":0" + minute;
-            } else if (hourOfDay > 10 & minute < 10) {
-                time = "" + hourOfDay + ":0" + minute;
-            } else if (hourOfDay < 10 & minute > 10) {
-                time = "0" + hourOfDay + ":" + minute;
-            } else {
-                time = "" + hourOfDay + ":" + minute;
             }
-
-
-            Toast alarmToast = Toast.makeText(getContext(), "Alarm added", Toast.LENGTH_SHORT);
-            alarmToast.show();
-        }
+        });
     }
+
+
+    private void addAlarm() {
+        int alarmId = new Random().nextInt(Integer.MAX_VALUE);
+
+        Alarm alarm = new Alarm(
+                alarmId,
+                timePicker.getHour(),
+                timePicker.getMinute(),
+                false
+        );
+
+        alarmList.add(alarm);
+
+    }
+
 }
