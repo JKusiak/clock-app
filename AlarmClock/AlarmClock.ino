@@ -27,18 +27,18 @@ void setup() {
 void loop() {
   delay(1000);
   clock.Update();
-  if (BTSerial.available()) {
-    Serial.println("Module HC-05 is connected at 38400 baud");
-  }
+//  if (BTSerial.available()) {
+//    Serial.println("Module HC-05 is connected at 38400 baud");
+//  }
   DisplayState();
-
-  if (BTSerial.available()) {   // read from HC-05 and send to Arduino Serial Monitor
-    Serial.write(BTSerial.read());
-  }
-  
-  if (Serial.available()) {   // read from Arduino Serial Monitor and send to HC-05
-    BTSerial.write(Serial.read());
-  }
+//
+//  if (BTSerial.available()) {   // read from HC-05 and send to Arduino Serial Monitor
+//    Serial.write(BTSerial.read());
+//  }
+//  
+//  if (Serial.available()) {   // read from Arduino Serial Monitor and send to HC-05
+//    BTSerial.write(Serial.read());
+//  }
   
 //  timePassed += 1;
 //  if(timePassed == 10){
