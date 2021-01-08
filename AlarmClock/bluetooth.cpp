@@ -1,4 +1,5 @@
 #include "bluetooth.h"
+#include <arduino.h>
 
 BTHC05::BTHC05(int pinRx, int pinTx) : SoftwareSerial(pinRx, pinTx)
 {

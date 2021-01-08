@@ -1,7 +1,6 @@
-#ifndef _BTHC05_H
-#define _BTHC05_H
+#ifndef Bluetooth_h
+#define Bluetooth_h
 
-#include <Arduino.h>
 #include <SoftwareSerial.h>
 
 

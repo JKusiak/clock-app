@@ -25,8 +25,9 @@ public class ClockActivity extends AppCompatActivity {
     ConstraintLayout constraintLayout;
     TimePicker timePicker;
     Button scheduleAlarmButton;
-    Button sendButton;
-    ArrayList<Alarm> alarmList = new ArrayList();
+    Button stopAlarmButton;
+//    ArrayList<Alarm> alarmList = new ArrayList();
+    String alarmToArduino;
     TextView errorMsgField;
 
     BluetoothAdapter myBluetooth = null;
@@ -43,7 +44,7 @@ public class ClockActivity extends AppCompatActivity {
         timePicker = findViewById(R.id.alarmTimePicker);
         scheduleAlarmButton = findViewById(R.id.scheduleAlarmBtn);
         constraintLayout = findViewById(R.id.clockLayout);
-        sendButton = findViewById(R.id.sendBtn);
+        stopAlarmButton = findViewById(R.id.stopAlarmBtn);
         errorMsgField = findViewById(R.id.errorMsg);
 
         Intent msgIntent = getIntent();
@@ -52,13 +53,13 @@ public class ClockActivity extends AppCompatActivity {
         new ConnectBT().execute(); //Call the class to connect
 
 
-        sendButton.setOnClickListener(new View.OnClickListener() {
+        stopAlarmButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                sendToArduino();
+                sendStopAlarmToArduino();
 
-                Toast alarmToast = Toast.makeText(ClockActivity.this, "Sent info to Arduino", Toast.LENGTH_SHORT);
+                Toast alarmToast = Toast.makeText(ClockActivity.this, "Alarm stopped", Toast.LENGTH_SHORT);
                 alarmToast.show();
             }
         });
@@ -69,6 +70,7 @@ public class ClockActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 addAlarm();
+                sendSetAlarmToArduino();
 
                 Toast alarmToast = Toast.makeText(ClockActivity.this, "Alarm added", Toast.LENGTH_SHORT);
                 alarmToast.show();
@@ -79,12 +81,27 @@ public class ClockActivity extends AppCompatActivity {
 
 
 
-    private void sendToArduino() {
+    private void sendSetAlarmToArduino() {
         if (btSocket!=null)
         {
             try
             {
-                btSocket.getOutputStream().write("1".getBytes());
+                btSocket.getOutputStream().write(alarmToArduino.getBytes());
+            }
+            catch (IOException e)
+            {
+                errorMsgField.setText("Didn't send information but was connected");
+            }
+        }
+    }
+
+
+    private void sendStopAlarmToArduino() {
+        if (btSocket!=null)
+        {
+            try
+            {
+                btSocket.getOutputStream().write("0".getBytes());
             }
             catch (IOException e)
             {
@@ -106,7 +123,7 @@ public class ClockActivity extends AppCompatActivity {
                 false
         );
 
-        alarmList.add(alarm);
+//        alarmList.add(alarm);
 
 
         TextView alarmTextView = new TextView(ClockActivity.this);
@@ -119,22 +136,24 @@ public class ClockActivity extends AppCompatActivity {
         ConstraintSet constraints = new ConstraintSet();
         constraints.clone(constraintLayout);
         constraints.connect(alarm.getAlarmId(), ConstraintSet.TOP, R.id.scheduleAlarmBtn, ConstraintSet.BOTTOM,50);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.START, R.id.clockLayout, ConstraintSet.START,0);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.START, R.id.clockLayout, ConstraintSet.START,250);
         constraints.connect(alarm.getAlarmId(), ConstraintSet.END, R.id.clockLayout, ConstraintSet.END,0);
         constraints.applyTo(constraintLayout);
 
         String alarmToDisplay;
-        if (alarm.getHour() < 10 & alarm.getMinute() < 10) {
-            alarmToDisplay = "0" + alarm.getHour() + ":0" + alarm.getMinute();
-        } else if (alarm.getHour() > 10 & alarm.getMinute() < 10) {
-            alarmToDisplay = "" + alarm.getHour() + ":0" + alarm.getMinute();
-        } else if (alarm.getHour() < 10 & alarm.getMinute() > 10) {
-            alarmToDisplay = "0" + alarm.getHour() + ":" + alarm.getMinute();
-        } else {
-            alarmToDisplay = "" + alarm.getHour() + ":" + alarm.getMinute();
-        }
+//        if (alarm.getHour() < 10 & alarm.getMinute() < 10) {
+//            alarmToDisplay = "0" + alarm.getHour() + ":0" + alarm.getMinute();
+//        } else if (alarm.getHour() > 10 & alarm.getMinute() < 10) {
+//            alarmToDisplay = "" + alarm.getHour() + ":0" + alarm.getMinute();
+//        } else if (alarm.getHour() < 10 & alarm.getMinute() > 10) {
+//            alarmToDisplay = "0" + alarm.getHour() + ":" + alarm.getMinute();
+//        } else {
+//            alarmToDisplay = "" + alarm.getHour() + ":" + alarm.getMinute();
+//        }
 
-        //TODO HERE PUSH TO ARDUINO VIA BLUETOOTH
+        alarmToDisplay = alarm.getHour() + ":" + alarm.getMinute();
+
+        alarmToArduino = alarmToDisplay;
 
         alarmTextView.setText("Alarm at: " + alarmToDisplay);
     }

@@ -11,9 +11,7 @@ Weather weatherStation(2);
 Clock clock(8, 7, 6);
 Alarm alarm(10, 1, 9);
 BTHC05 bthc05(11, 12);
-
 String bluetoothData = " ";
-int timePassed = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -21,11 +19,9 @@ void setup() {
   Serial.println("start");
   
   bthc05.begin(9600);
-  bthc05.println("Bluetooth On....");
   
   lcd.init();
   lcd.backlight();
-
   //  clock.SetTimeAndDate(sec, min, h, weekday, day, month, year);
 }
 
@@ -42,25 +38,11 @@ void loop() {
   if (bthc05.available()) {
     bluetoothData = bthc05.read();
     Serial.print(bluetoothData);
-  
-    lcd.setCursor(15, 0);
-    lcd.print("1");
+
+    if (bluetoothData == clock.ToString()) {
+      alarm.SwitchOn();
+    }
   }
-
-//  if (bluetoothData == '1') {
-//    lcd.setCursor(15, 0);
-//    lcd.print("1");
-//    Serial.print(bluetoothData);
-//  } else {
-//    lcd.setCursor(15, 0);
-//    lcd.print("0");
-//  }
-
-
-  //  timePassed += 1;
-  //  if(timePassed == 10){
-  //    StartAlarm();
-  //  }
 }
 
 

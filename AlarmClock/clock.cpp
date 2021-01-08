@@ -21,6 +21,5 @@ void Clock::SetTimeAndDate(int _seconds, int _minutes, int _hours, int _dayOfWee
 }
 
 String Clock::ToString(){
-    return String(_RTC->hours) + ':' + String(_RTC->minutes) + " " 
-          + String(_RTC->dayofmonth) + '/' + String(_RTC->month) + '/' + String(_RTC->year);
+    return String(_RTC->hours) + ':' + String(_RTC->minutes);
 }
