@@ -16,11 +16,10 @@ int timePassed = 0;
 
 void setup() {
   Serial.begin(9600);
-  
-
+  BTSerial.begin(9600);
+ 
   lcd.init();
   lcd.backlight();
-//  clock.SetTimeAndDate(0,24,20,7,24,05,2020);
 }
 
 
@@ -28,17 +27,15 @@ void setup() {
 void loop() {
   delay(1000);
   clock.Update();
-//  if (BTSerial.available()) {
-//    Serial.println("Module HC-05 is connected at 38400 baud");
-//  }
   DisplayState();
 
-  if (Serial.available() > 0) {
-    bluetoothData = Serial.read();
+  if (BTSerial.available()) {
+    bluetoothData = BTSerial.read();
     
     if (bluetoothData == '1') {
       lcd.setCursor(15, 0);
       lcd.print(bluetoothData);
+      Serial.print(bluetoothData);  
     }
     else {
       lcd.setCursor(15, 0);
