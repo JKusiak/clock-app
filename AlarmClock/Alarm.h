@@ -7,6 +7,7 @@ class Alarm {
   public:
     Alarm(int buzzerPin, int interruptPin, int diodePin);
     void SwitchOn();
+    void SwitchOff();
   private:
     int _buzzerPin;
     int _interruptPin;

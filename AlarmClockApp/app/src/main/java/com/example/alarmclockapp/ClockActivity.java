@@ -21,20 +21,27 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
+import android.os.Handler;
+
 public class ClockActivity extends AppCompatActivity {
     ConstraintLayout constraintLayout;
     TimePicker timePicker;
     Button scheduleAlarmButton;
     Button stopAlarmButton;
-//    ArrayList<Alarm> alarmList = new ArrayList();
+    Button receiveDataButton;
     String alarmToArduino;
     TextView errorMsgField;
+    TextView timeDataArduino;
+    TextView weatherDataArduino;
 
     BluetoothAdapter myBluetooth = null;
     BluetoothSocket btSocket = null;
     private boolean isBtConnected = false;
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     String deviceAddress = null;
+
+    boolean stopThread;
+    byte buffer[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +52,11 @@ public class ClockActivity extends AppCompatActivity {
         scheduleAlarmButton = findViewById(R.id.scheduleAlarmBtn);
         constraintLayout = findViewById(R.id.clockLayout);
         stopAlarmButton = findViewById(R.id.stopAlarmBtn);
+        receiveDataButton = findViewById(R.id.receiveDataBtn);
         errorMsgField = findViewById(R.id.errorMsg);
+        timeDataArduino = findViewById(R.id.timeDataArduino);
+        weatherDataArduino = findViewById(R.id.weatherDataArduino);
+
 
         Intent msgIntent = getIntent();
         deviceAddress = msgIntent.getStringExtra(DeviceListActivity.EXTRA_ADDRESS);
@@ -76,6 +87,22 @@ public class ClockActivity extends AppCompatActivity {
                 alarmToast.show();
             }
         });
+
+
+
+        receiveDataButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                beginListenForData();
+
+                Toast alarmToast = Toast.makeText(ClockActivity.this, "Received data", Toast.LENGTH_SHORT);
+                alarmToast.show();
+            }
+        });
+
+
+
     }
 
 
@@ -86,7 +113,7 @@ public class ClockActivity extends AppCompatActivity {
         {
             try
             {
-                btSocket.getOutputStream().write(alarmToArduino.getBytes());
+                btSocket.getOutputStream().write("1".getBytes());
             }
             catch (IOException e)
             {
@@ -197,5 +224,49 @@ public class ClockActivity extends AppCompatActivity {
         {
             super.onPostExecute(result);
         }
+    }
+
+
+
+
+    void beginListenForData()
+    {
+        final Handler handler = new Handler();
+        stopThread = false;
+        buffer = new byte[1024];
+        Thread thread  = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                while(!Thread.currentThread().isInterrupted() && !stopThread)
+                {
+                    try
+                    {
+                        //int byteCount = inputStream.available();
+                        int byteCount = btSocket.getInputStream().available();
+                        if(byteCount > 0)
+                        {
+                            byte[] rawBytes = new byte[byteCount];
+                            btSocket.getInputStream().read(rawBytes);
+                            final String arduinoData = new String(rawBytes,"UTF-8");
+                            handler.post(new Runnable() {
+                                public void run()
+                                {
+                                    timeDataArduino.setText(arduinoData);
+
+                                }
+                            });
+
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        stopThread = true;
+                    }
+                }
+            }
+        });
+
+        thread.start();
     }
 }

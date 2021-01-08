@@ -1,5 +1,5 @@
 #include "Weather.h"
-#include "Arduino.h"
+
 
 Weather::Weather(int pin) {
   _pin = pin;

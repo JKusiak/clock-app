@@ -23,3 +23,48 @@ void Clock::SetTimeAndDate(int _seconds, int _minutes, int _hours, int _dayOfWee
 String Clock::ToString(){
     return String(_RTC->hours) + ':' + String(_RTC->minutes);
 }
+
+char* Clock::getHour() {
+   int hour = _RTC->hours;
+   char* toReturn = new char[2];
+   if (hour < 10) {
+    toReturn[0] = 48;
+    toReturn[1] = hour + 48;
+   } else {
+    int tens = hour/10;
+    int units = hour%10;
+    toReturn[0] = tens + 48;
+    toReturn[1] = units + 48;
+   }
+   return toReturn;
+}
+
+char* Clock::getMin() {
+   int minute = _RTC->minutes;
+   char* toReturn = new char[2];
+   if (minute < 10) {
+    toReturn[0] = 48;
+    toReturn[1] = minute + 48;
+   } else {
+    int tens = minute/10;
+    int units = minute%10;
+    toReturn[0] = tens + 48;
+    toReturn[1] = units + 48;
+   }
+   return toReturn;
+}
+
+char* Clock::getSec() {
+   int sec = _RTC->seconds;
+   char* toReturn = new char[2];
+   if (sec < 10) {
+    toReturn[0] = 48;
+    toReturn[1] = sec + 48;
+   } else {
+    int tens = sec/10;
+    int units = sec%10;
+    toReturn[0] = tens + 48;
+    toReturn[1] = units + "48";
+   }
+   return toReturn;
+}
