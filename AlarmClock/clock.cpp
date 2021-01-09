@@ -32,6 +32,7 @@ String Clock::ToStringDate() {
   return String(_RTC->dayofmonth) + "/" + String(_RTC->month) + "/" + String(_RTC->year);
 }
 
+
 char* Clock::getHour() {
    int hour = _RTC->hours;
    char* toReturn = new char[2];

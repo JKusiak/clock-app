@@ -23,7 +23,7 @@ String alarmDataString = " 1 ";
 String currentTime = "don't start";
 char rc;
 char toSend[8];
-
+bool wasPlayed = false;
 
 
 void setup() {
@@ -45,8 +45,13 @@ void loop() {
   DisplayTime();
   DisplayWeather();
 
+//  lcd.setCursor(0, 0);
+//  lcd.print(alarmDataString);
+//
+//  lcd.setCursor(0, 1);
+//  lcd.print(currentTime);
   
-  if (bthc05.available()) {
+ if (bthc05.available()) {
     alarmDataString = "";
     while (bthc05.available() > 0) {
       rc = bthc05.read();
@@ -54,19 +59,20 @@ void loop() {
       Serial.write(rc);
     }
   }
-  
-  lcd.setCursor(0, 0);
-  lcd.print(alarmDataString);
 
-  lcd.setCursor(0, 1);
-  lcd.print(currentTime);
-  
-  
-  if (currentTime == alarmDataString) {
-      StartAlarm();
+  if (isAlarmTime() && wasPlayed == false) {
+    wasPlayed = true;
+    StartAlarm();
   }
+
+  if (!isAlarmTime()) {
+    wasPlayed = false;
+  }  
 }
 
+bool isAlarmTime() {
+  return clock.ToStringAlarm() == alarmDataString;
+}
 
 void DisplayTime() {
   hour = clock.getHour();
@@ -87,8 +93,6 @@ void DisplayTime() {
 //  lcd.print(clock.ToStringTime());
 //  lcd.setCursor(0, 1);
 //  lcd.print(clock.ToStringDate());
-
-  currentTime = clock.ToStringAlarm();
   
   delete[] hour;
   delete[] minute;
