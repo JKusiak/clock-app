@@ -33,3 +33,42 @@ float Weather::GetHumidity() {
 String Weather::ToString(){
   return String(GetHumidity()) + "% " + String(GetTemperature()) + " C";
 }
+
+char* Weather::getTemperature(){
+  int temp = GetTemperature();
+  char* toReturn = new char[3];
+  
+  if (temp < 0) {
+    toReturn[0] = 45;
+   } else {
+    toReturn[0] = 32;
+  }
+
+  int absTemp = abs(temp);
+   
+  if (absTemp < 10) {
+    toReturn[1] = 48;
+    toReturn[2] = temp + 48;
+   } else {
+    int tens = absTemp/10;
+    int units = absTemp%10;
+    toReturn[1] = tens + 48;
+    toReturn[2] = units + 48;
+  }
+   return toReturn;
+}
+
+char* Weather::getHumidity(){
+  int weather = GetHumidity();
+  char* toReturn = new char[2];
+   if (weather < 10) {
+    toReturn[0] = 48;
+    toReturn[1] = weather + 48;
+   } else {
+    int tens = weather/10;
+    int units = weather%10;
+    toReturn[0] = tens + 48;
+    toReturn[1] = units + 48;
+   }
+   return toReturn;
+  }

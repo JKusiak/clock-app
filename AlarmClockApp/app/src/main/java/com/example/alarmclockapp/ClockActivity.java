@@ -20,8 +20,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.os.Handler;
+
+import static java.lang.Thread.sleep;
 
 public class ClockActivity extends AppCompatActivity {
     ConstraintLayout constraintLayout;
@@ -89,7 +93,6 @@ public class ClockActivity extends AppCompatActivity {
         });
 
 
-
         receiveDataButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -102,21 +105,14 @@ public class ClockActivity extends AppCompatActivity {
         });
 
 
-
     }
 
 
-
-
     private void sendSetAlarmToArduino() {
-        if (btSocket!=null)
-        {
-            try
-            {
+        if (btSocket != null) {
+            try {
                 btSocket.getOutputStream().write("1".getBytes());
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 errorMsgField.setText("Didn't send information but was connected");
             }
         }
@@ -124,20 +120,14 @@ public class ClockActivity extends AppCompatActivity {
 
 
     private void sendStopAlarmToArduino() {
-        if (btSocket!=null)
-        {
-            try
-            {
+        if (btSocket != null) {
+            try {
                 btSocket.getOutputStream().write("0".getBytes());
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 errorMsgField.setText("Didn't send information but was connected");
             }
         }
     }
-
-
 
 
     private void addAlarm() {
@@ -162,23 +152,21 @@ public class ClockActivity extends AppCompatActivity {
 
         ConstraintSet constraints = new ConstraintSet();
         constraints.clone(constraintLayout);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.TOP, R.id.scheduleAlarmBtn, ConstraintSet.BOTTOM,50);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.START, R.id.clockLayout, ConstraintSet.START,250);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.END, R.id.clockLayout, ConstraintSet.END,0);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.TOP, R.id.scheduleAlarmBtn, ConstraintSet.BOTTOM, 50);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.START, R.id.clockLayout, ConstraintSet.START, 250);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.END, R.id.clockLayout, ConstraintSet.END, 0);
         constraints.applyTo(constraintLayout);
 
         String alarmToDisplay;
-//        if (alarm.getHour() < 10 & alarm.getMinute() < 10) {
-//            alarmToDisplay = "0" + alarm.getHour() + ":0" + alarm.getMinute();
-//        } else if (alarm.getHour() > 10 & alarm.getMinute() < 10) {
-//            alarmToDisplay = "" + alarm.getHour() + ":0" + alarm.getMinute();
-//        } else if (alarm.getHour() < 10 & alarm.getMinute() > 10) {
-//            alarmToDisplay = "0" + alarm.getHour() + ":" + alarm.getMinute();
-//        } else {
-//            alarmToDisplay = "" + alarm.getHour() + ":" + alarm.getMinute();
-//        }
-
-        alarmToDisplay = alarm.getHour() + ":" + alarm.getMinute();
+        if (alarm.getHour() < 10 & alarm.getMinute() < 10) {
+            alarmToDisplay = "0" + alarm.getHour() + ":0" + alarm.getMinute();
+        } else if (alarm.getHour() > 10 & alarm.getMinute() < 10) {
+            alarmToDisplay = "" + alarm.getHour() + ":0" + alarm.getMinute();
+        } else if (alarm.getHour() < 10 & alarm.getMinute() > 10) {
+            alarmToDisplay = "0" + alarm.getHour() + ":" + alarm.getMinute();
+        } else {
+            alarmToDisplay = "" + alarm.getHour() + ":" + alarm.getMinute();
+        }
 
         alarmToArduino = alarmToDisplay;
 
@@ -186,39 +174,33 @@ public class ClockActivity extends AppCompatActivity {
     }
 
 
-
-
     private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
     {
         private boolean ConnectSuccess = true; //if it's here, it's almost connected
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             ;
         }
 
         @Override
         protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
         {
-            try
-            {
-                if (btSocket == null || !isBtConnected)
-                {
+            try {
+                if (btSocket == null || !isBtConnected) {
                     myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
                     BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(deviceAddress);//connects to the device's address and checks if it's available
                     btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                     btSocket.connect();//start connection
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 ConnectSuccess = false;//if the try failed, you can check the exception here
                 errorMsgField.setText("Failed to connect on clock activity level");
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
         {
@@ -226,41 +208,34 @@ public class ClockActivity extends AppCompatActivity {
         }
     }
 
+    //regex (?<=a)[\d: -]+(?=a)
 
-
-
-    void beginListenForData()
-    {
+    void beginListenForData() {
         final Handler handler = new Handler();
         stopThread = false;
         buffer = new byte[1024];
-        Thread thread  = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                while(!Thread.currentThread().isInterrupted() && !stopThread)
-                {
-                    try
-                    {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                while (!Thread.currentThread().isInterrupted() && !stopThread) {
+                    try {
                         //int byteCount = inputStream.available();
                         int byteCount = btSocket.getInputStream().available();
-                        if(byteCount > 0)
-                        {
+                        byteCount += byteCount;
+                        if (byteCount >= 56){
                             byte[] rawBytes = new byte[byteCount];
+                            byteCount = 0;
                             btSocket.getInputStream().read(rawBytes);
-                            final String arduinoData = new String(rawBytes,"UTF-8");
+                            final String arduinoData = new String(rawBytes, "UTF-8");
+                            Pattern p = Pattern.compile("(?<=a)[\\d: -]+(?=a)");
+                            Matcher m = p.matcher(arduinoData);
+                            final String timeToDisplay = m.group();
                             handler.post(new Runnable() {
-                                public void run()
-                                {
-                                    timeDataArduino.setText(arduinoData);
-
+                                public void run() {
+                                    timeDataArduino.setText(timeToDisplay);
                                 }
                             });
-
                         }
-                    }
-                    catch (IOException ex)
-                    {
+                    } catch (IOException ex) {
                         stopThread = true;
                     }
                 }

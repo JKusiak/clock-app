@@ -10,6 +10,8 @@ class Weather {
     float GetTemperature();
     float GetHumidity();
     String ToString();
+    char* getTemperature();
+    char* getHumidity();
   private:
     int _pin;
     DHT* _dht;

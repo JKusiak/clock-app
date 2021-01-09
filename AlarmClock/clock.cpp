@@ -20,10 +20,6 @@ void Clock::SetTimeAndDate(int _seconds, int _minutes, int _hours, int _dayOfWee
   _RTC->setDS1302Time(_seconds, _minutes, _hours, _dayOfWeek, _day, _month, _year);
 }
 
-String Clock::ToString(){
-    return String(_RTC->hours) + ':' + String(_RTC->minutes);
-}
-
 char* Clock::getHour() {
    int hour = _RTC->hours;
    char* toReturn = new char[2];
@@ -64,7 +60,7 @@ char* Clock::getSec() {
     int tens = sec/10;
     int units = sec%10;
     toReturn[0] = tens + 48;
-    toReturn[1] = units + "48";
+    toReturn[1] = units + 48;
    }
    return toReturn;
 }
