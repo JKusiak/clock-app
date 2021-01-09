@@ -30,8 +30,12 @@ float Weather::GetHumidity() {
   return h;
 }
 
-String Weather::ToString(){
-  return String(GetHumidity()) + "% " + String(GetTemperature()) + " C";
+String Weather::ToStringTemperature(){
+  return String(GetTemperature()) + "C";
+}
+
+String Weather::ToStringHumidity(){
+  return String(GetHumidity()) + "% ";
 }
 
 char* Weather::getTemperature(){

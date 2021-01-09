@@ -20,6 +20,14 @@ void Clock::SetTimeAndDate(int _seconds, int _minutes, int _hours, int _dayOfWee
   _RTC->setDS1302Time(_seconds, _minutes, _hours, _dayOfWeek, _day, _month, _year);
 }
 
+String Clock::ToStringTime() {
+  return String(_RTC->hours) + ":" + String(_RTC->minutes) + ":" + String(_RTC->seconds);
+}
+
+String Clock::ToStringDate() {
+  return String(_RTC->dayofmonth) + "/" + String(_RTC->month) + "/" + String(_RTC->year);
+}
+
 char* Clock::getHour() {
    int hour = _RTC->hours;
    char* toReturn = new char[2];

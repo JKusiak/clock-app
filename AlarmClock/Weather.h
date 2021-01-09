@@ -9,7 +9,8 @@ class Weather {
     ~Weather();
     float GetTemperature();
     float GetHumidity();
-    String ToString();
+    String ToStringTemperature();
+    String ToStringHumidity();
     char* getTemperature();
     char* getHumidity();
   private:

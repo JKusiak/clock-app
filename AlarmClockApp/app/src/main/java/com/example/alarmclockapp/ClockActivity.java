@@ -208,8 +208,6 @@ public class ClockActivity extends AppCompatActivity {
         }
     }
 
-    //regex (?<=a)[\d: -]+(?=a)
-
     void beginListenForData() {
         final Handler handler = new Handler();
         stopThread = false;
@@ -226,14 +224,20 @@ public class ClockActivity extends AppCompatActivity {
                             byteCount = 0;
                             btSocket.getInputStream().read(rawBytes);
                             final String arduinoData = new String(rawBytes, "UTF-8");
-                            Pattern p = Pattern.compile("(?<=a)[\\d: -]+(?=a)");
+                            Pattern p = Pattern.compile("(?<=a)(\\d{2}:\\d{2}:\\d{2})([ -]\\d{2})(\\d{2})(?=a)");
                             Matcher m = p.matcher(arduinoData);
-                            final String timeToDisplay = m.group();
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    timeDataArduino.setText(timeToDisplay);
-                                }
-                            });
+                            while (m.find()) {
+                                String time = m.group(1);
+                                String temperature = m.group(2);
+                                String humidity = m.group(3);
+
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        timeDataArduino.setText(time);
+                                        weatherDataArduino.setText(temperature + " °C" + "     " + humidity + " %");
+                                    }
+                                });
+                            }
                         }
                     } catch (IOException ex) {
                         stopThread = true;

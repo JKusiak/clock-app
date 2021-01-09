@@ -20,18 +20,14 @@ char* humidity;
 
 const byte interruptPin = 3;
 String bluetoothData;
-int wait = 0;
 char toSend[8];
 
 
 
 void setup() {
-  attachInterrupt(digitalPinToInterrupt(interruptPin), StopAlarm, CHANGE); 
-  
+//  attachInterrupt(digitalPinToInterrupt(interruptPin), StopAlarm, CHANGE); 
+
   Serial.begin(9600);
-  while (!Serial) ; // wait for serial port to connect. Needed for native USB
-  Serial.println("start");
-  
   bthc05.begin(9600);
   
   lcd.init();
@@ -40,41 +36,20 @@ void setup() {
 }
 
 
-
 void loop() {
   interrupts();
   clock.Update();
-  bthc05.write('a');
+  
   DisplayTime();
   DisplayWeather();
-
 
 if (bthc05.available()) {
     bluetoothData = bthc05.read();
     Serial.print(bluetoothData);
-    
-//    lcd.setCursor(14, 0);
-//    lcd.print(bluetoothData);
-//
-//    if (bluetoothData == "49") {
-//      lcd.setCursor(14, 0);
-//      lcd.print("1");
-//    }
-//
-//    if (bluetoothData == "48") {
-//      alarm.SwitchOff();  
-//    }
   }
-  
-//  wait++;
-
-//  if (wait == 10) {
-//    StartAlarm();
-//  }
-  
- 
-  
 }
+
+
 
 
 void DisplayTime() {
@@ -82,6 +57,7 @@ void DisplayTime() {
   minute = clock.getMin();
   second = clock.getSec();
   
+  bthc05.write('a');
   bthc05.write(hour[0]);
   bthc05.write(hour[1]);
   bthc05.write(':');
@@ -92,58 +68,31 @@ void DisplayTime() {
   bthc05.write(second[1]);
 
   lcd.setCursor(0, 0);
-  lcd.print(hour[0]);
-  lcd.setCursor(1, 0);
-  lcd.print(hour[1]);
-  lcd.setCursor(2, 0);
-  lcd.print(':');
-  lcd.setCursor(3, 0);
-  lcd.print(minute[0]);
-  lcd.setCursor(4, 0);
-  lcd.print(minute[1]);
-  lcd.setCursor(5, 0);
-  lcd.print(':');
-  lcd.setCursor(6, 0);
-  lcd.print(second[0]);
-  lcd.setCursor(7, 0);
-  lcd.print(second[1]);
+  lcd.print(clock.ToStringTime());
+  lcd.setCursor(0, 1);
+  lcd.print(clock.ToStringDate());
 
   delete[] hour;
   delete[] minute;
   delete[] second;
 }
 
-void DisplayWeather() {
-  lcd.setCursor(0, 1);
-  //lcd.print(weatherStation.ToString());
 
+void DisplayWeather() {
   temperature = weatherStation.getTemperature();
   humidity = weatherStation.getHumidity();
 
   bthc05.write(temperature[0]);
   bthc05.write(temperature[1]);
   bthc05.write(temperature[2]);
-
   bthc05.write(humidity[0]);
   bthc05.write(humidity[1]);
 
+  lcd.setCursor(10, 0);
+  lcd.print(weatherStation.ToStringTemperature());
 
-
-  lcd.setCursor(0, 1);
-  lcd.print(temperature[0]);
-  lcd.setCursor(1, 1);
-  lcd.print(temperature[1]);
-  lcd.setCursor(2, 1);
-  lcd.print(temperature[2]);
-  lcd.setCursor(3, 1);
-  lcd.print(' ');
-  lcd.setCursor(4, 1);
-  lcd.print(humidity[0]);
-  lcd.setCursor(5, 1);
-  lcd.print(humidity[1]);
-  
-    
-
+  lcd.setCursor(10, 1);
+  lcd.print(weatherStation.ToStringHumidity());
 
   delete[] temperature;
   delete[] humidity;
@@ -154,8 +103,4 @@ void StartAlarm() {
   lcd.setCursor(0, 0);
   lcd.print("WAKE UP !!!");
   alarm.SwitchOn();
-}
-
-void StopAlarm() {
-  alarm.SwitchOff();
 }

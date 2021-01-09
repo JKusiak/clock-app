@@ -9,6 +9,8 @@ class Clock {
     ~Clock();
     void SetTimeAndDate(int _seconds, int _minutes, int _hours, int _dayOfWeek, int _day, int _month, int _year);
     void Update();
+    String ToStringDate();
+    String ToStringTime();
     char* getHour();
     char* getMin();
     char* getSec();
