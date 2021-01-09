@@ -17,7 +17,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -25,16 +24,13 @@ import java.util.regex.Pattern;
 
 import android.os.Handler;
 
-import static java.lang.Thread.sleep;
 
 public class ClockActivity extends AppCompatActivity {
     ConstraintLayout constraintLayout;
     TimePicker timePicker;
     Button scheduleAlarmButton;
-    Button stopAlarmButton;
     Button receiveDataButton;
     String alarmToArduino;
-    TextView errorMsgField;
     TextView timeDataArduino;
     TextView weatherDataArduino;
 
@@ -55,9 +51,9 @@ public class ClockActivity extends AppCompatActivity {
         timePicker = findViewById(R.id.alarmTimePicker);
         scheduleAlarmButton = findViewById(R.id.scheduleAlarmBtn);
         constraintLayout = findViewById(R.id.clockLayout);
-        stopAlarmButton = findViewById(R.id.stopAlarmBtn);
+
         receiveDataButton = findViewById(R.id.receiveDataBtn);
-        errorMsgField = findViewById(R.id.errorMsg);
+
         timeDataArduino = findViewById(R.id.timeDataArduino);
         weatherDataArduino = findViewById(R.id.weatherDataArduino);
 
@@ -67,25 +63,12 @@ public class ClockActivity extends AppCompatActivity {
 
         new ConnectBT().execute(); //Call the class to connect
 
-
-        stopAlarmButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                sendStopAlarmToArduino();
-
-                Toast alarmToast = Toast.makeText(ClockActivity.this, "Alarm stopped", Toast.LENGTH_SHORT);
-                alarmToast.show();
-            }
-        });
-
-
         scheduleAlarmButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 addAlarm();
-                sendSetAlarmToArduino();
+                sendAlarmToArduino();
 
                 Toast alarmToast = Toast.makeText(ClockActivity.this, "Alarm added", Toast.LENGTH_SHORT);
                 alarmToast.show();
@@ -108,26 +91,22 @@ public class ClockActivity extends AppCompatActivity {
     }
 
 
-    private void sendSetAlarmToArduino() {
+    private void sendAlarmToArduino() {
         if (btSocket != null) {
             try {
-                btSocket.getOutputStream().write("1".getBytes());
+//                byte[] rawBytes = alarmToArduino.getBytes();
+//
+//                for (int i = 0; i < 10; i++) {
+//                    btSocket.getOutputStream().write(rawBytes[i]);
+//                }
+                btSocket.getOutputStream().write(alarmToArduino.getBytes());
             } catch (IOException e) {
-                errorMsgField.setText("Didn't send information but was connected");
+                Toast alarmToast = Toast.makeText(ClockActivity.this, "Didn't send information but was connected", Toast.LENGTH_SHORT);
+                alarmToast.show();
             }
         }
     }
 
-
-    private void sendStopAlarmToArduino() {
-        if (btSocket != null) {
-            try {
-                btSocket.getOutputStream().write("0".getBytes());
-            } catch (IOException e) {
-                errorMsgField.setText("Didn't send information but was connected");
-            }
-        }
-    }
 
 
     private void addAlarm() {
@@ -140,37 +119,36 @@ public class ClockActivity extends AppCompatActivity {
                 false
         );
 
-//        alarmList.add(alarm);
-
 
         TextView alarmTextView = new TextView(ClockActivity.this);
         alarmTextView.setId(alarm.getAlarmId());
         alarmTextView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT));
-        alarmTextView.setTextSize(25);
+        alarmTextView.setTextSize(30);
         constraintLayout.addView(alarmTextView);
 
         ConstraintSet constraints = new ConstraintSet();
         constraints.clone(constraintLayout);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.TOP, R.id.scheduleAlarmBtn, ConstraintSet.BOTTOM, 50);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.START, R.id.clockLayout, ConstraintSet.START, 250);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.END, R.id.clockLayout, ConstraintSet.END, 0);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.TOP, R.id.scheduleAlarmBtn, ConstraintSet.BOTTOM, 0);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.BOTTOM, R.id.clockLayout, ConstraintSet.BOTTOM, 700);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.LEFT, R.id.clockLayout, ConstraintSet.LEFT, 200);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.RIGHT, R.id.clockLayout, ConstraintSet.RIGHT, 0);
         constraints.applyTo(constraintLayout);
 
         String alarmToDisplay;
         if (alarm.getHour() < 10 & alarm.getMinute() < 10) {
             alarmToDisplay = "0" + alarm.getHour() + ":0" + alarm.getMinute();
         } else if (alarm.getHour() > 10 & alarm.getMinute() < 10) {
-            alarmToDisplay = "" + alarm.getHour() + ":0" + alarm.getMinute();
+            alarmToDisplay = alarm.getHour() + ":0" + alarm.getMinute();
         } else if (alarm.getHour() < 10 & alarm.getMinute() > 10) {
             alarmToDisplay = "0" + alarm.getHour() + ":" + alarm.getMinute();
         } else {
-            alarmToDisplay = "" + alarm.getHour() + ":" + alarm.getMinute();
+            alarmToDisplay = alarm.getHour() + ":" + alarm.getMinute();
         }
 
-        alarmToArduino = alarmToDisplay;
+        alarmToArduino = alarm.getHour() + ":" + alarm.getMinute();
 
-        alarmTextView.setText("Alarm at: " + alarmToDisplay);
+        alarmTextView.setText("Alarm set at " + alarmToDisplay);
     }
 
 
@@ -196,7 +174,8 @@ public class ClockActivity extends AppCompatActivity {
                 }
             } catch (IOException e) {
                 ConnectSuccess = false;//if the try failed, you can check the exception here
-                errorMsgField.setText("Failed to connect on clock activity level");
+                Toast alarmToast = Toast.makeText(ClockActivity.this, "Failed to connect", Toast.LENGTH_SHORT);
+                alarmToast.show();
             }
             return null;
         }

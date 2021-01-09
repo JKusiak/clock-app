@@ -38,22 +38,10 @@
         app:layout_constraintVertical_bias="0.049" />
 
     <Button
-        android:id="@+id/stopAlarmBtn"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
-        android:text="stop alarm"
-        android:textColorHighlight="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scheduleAlarmBtn" />
-
-    <Button
         android:id="@+id/receiveDataBtn"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="212dp"
         android:text="receive data"
         android:textColorHighlight="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,17 +73,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alarmTimePicker"
         app:layout_constraintVertical_bias="0.087" />
-
-    <TextView
-        android:id="@+id/errorMsg"
-        android:layout_width="247dp"
-        android:layout_height="57dp"
-        android:gravity="center"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stopAlarmBtn"
-        app:layout_constraintVertical_bias="0.698" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

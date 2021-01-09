@@ -20,6 +20,10 @@ void Clock::SetTimeAndDate(int _seconds, int _minutes, int _hours, int _dayOfWee
   _RTC->setDS1302Time(_seconds, _minutes, _hours, _dayOfWeek, _day, _month, _year);
 }
 
+String Clock::ToStringAlarm() {
+   return String(_RTC->hours) + ":" + String(_RTC->minutes);
+}
+
 String Clock::ToStringTime() {
   return String(_RTC->hours) + ":" + String(_RTC->minutes) + ":" + String(_RTC->seconds);
 }
