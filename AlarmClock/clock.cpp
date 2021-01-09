@@ -28,6 +28,10 @@ String Clock::ToStringDate() {
   return String(_RTC->dayofmonth) + "/" + String(_RTC->month) + "/" + String(_RTC->year);
 }
 
+String Clock::toStringHourMin() {
+  return String(_RTC->hours) + ":" + String(_RTC->minutes);
+}
+
 char* Clock::getHour() {
    int hour = _RTC->hours;
    char* toReturn = new char[2];

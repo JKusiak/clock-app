@@ -22,7 +22,8 @@ const byte interruptPin = 3;
 String bluetoothData;
 char toSend[8];
 
-
+bool wasPlayed = false;
+String alarmTime;
 
 void setup() {
 //  attachInterrupt(digitalPinToInterrupt(interruptPin), StopAlarm, CHANGE); 
@@ -43,14 +44,27 @@ void loop() {
   DisplayTime();
   DisplayWeather();
 
-if (bthc05.available()) {
-    bluetoothData = bthc05.read();
-    Serial.print(bluetoothData);
+  if (bthc05.available()) {
+      bluetoothData = bthc05.read();
+      Serial.print(bluetoothData);
+      alarmTime = bluetoothData;
+    }
+
+  if (isAlarmTime() && wasPlayed == false) {
+    wasPlayed = true;
+    StartAlarm();
   }
+
+  if (!isAlarmTime()) {
+    wasPlayed = false;
+  }
+
 }
 
 
-
+bool isAlarmTime() {
+  return clock.toStringHourMin() == alarmTime;
+}
 
 void DisplayTime() {
   hour = clock.getHour();

@@ -11,6 +11,7 @@ class Clock {
     void Update();
     String ToStringDate();
     String ToStringTime();
+    String toStringHourMin();
     char* getHour();
     char* getMin();
     char* getSec();
