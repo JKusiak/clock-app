@@ -1,4 +1,4 @@
-#include "clock.h"
+#include "Clock.h"
 
 Clock::Clock(int _rst, int _dat, int _clk) {
   _pinRST = _rst;
@@ -25,7 +25,27 @@ String Clock::ToStringAlarm() {
 }
 
 String Clock::ToStringTime() {
-  return String(_RTC->hours) + ":" + String(_RTC->minutes) + ":" + String(_RTC->seconds);
+  String timeToDisplay;
+
+  if (_RTC->hours > 10 && _RTC->minutes > 10 && _RTC->seconds > 10) {
+    timeToDisplay = String(_RTC->hours) + ":" + String(_RTC->minutes) + ":" + String(_RTC->seconds);
+  } else if (_RTC->hours > 10 && _RTC->minutes > 10 && _RTC->seconds < 10) {
+    timeToDisplay = String(_RTC->hours) + ":" + String(_RTC->minutes) + ":0" + String(_RTC->seconds);
+  } else if (_RTC->hours > 10 && _RTC->minutes < 10 && _RTC->seconds < 10) {
+    timeToDisplay = String(_RTC->hours) + ":0" + String(_RTC->minutes) + ":0" + String(_RTC->seconds);
+  } else if (_RTC->hours > 10 && _RTC->minutes < 10 && _RTC->seconds > 10) {
+    timeToDisplay = String(_RTC->hours) + ":0" + String(_RTC->minutes) + ":" + String(_RTC->seconds);
+  } else if (_RTC->hours < 10 && _RTC->minutes > 10 && _RTC->seconds > 10) {
+    timeToDisplay = "0" + String(_RTC->hours)+ ":" + String(_RTC->minutes) + ":" + String(_RTC->seconds);
+  } else if (_RTC->hours < 10 && _RTC->minutes < 10 && _RTC->seconds < 10) {
+    timeToDisplay = "0" + String(_RTC->hours)+ ":0" + String(_RTC->minutes) + ":0" + String(_RTC->seconds);
+  } else if (_RTC->hours < 10 && _RTC->minutes > 10 && _RTC->seconds < 10) {
+    timeToDisplay = "0" + String(_RTC->hours)+ ":" + String(_RTC->minutes) + ":0" + String(_RTC->seconds);
+  } else if (_RTC->hours < 10 && _RTC->minutes < 10 && _RTC->seconds > 10) {
+    timeToDisplay = "0" + String(_RTC->hours)+ ":0" + String(_RTC->minutes) + ":" + String(_RTC->seconds);
+  }
+
+  return timeToDisplay;
 }
 
 String Clock::ToStringDate() {

@@ -4,10 +4,10 @@
 #include <SoftwareSerial.h>
 
 
-class BTHC05 : public SoftwareSerial
+class BluetoothHC05 : public SoftwareSerial
 {
   public:
-    BTHC05(int pinRx, int pinTx);
+    BluetoothHC05(int pinRx, int pinTx);
 
 
 };

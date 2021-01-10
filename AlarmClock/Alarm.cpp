@@ -48,4 +48,5 @@ void Alarm::SwitchOn(){
       }
     }
   }
+  isStopped = false;
 }

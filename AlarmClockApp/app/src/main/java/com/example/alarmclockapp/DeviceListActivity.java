@@ -18,8 +18,8 @@ import java.util.Set;
 
 public class DeviceListActivity extends AppCompatActivity {
     Button showPairedDevicesButton;
-    ListView devicelist;
-    BluetoothAdapter myBluetooth = null;
+    ListView deviceList;
+    BluetoothAdapter bluetoothAdapter = null;
     Set<BluetoothDevice> pairedDevices;
     public static String EXTRA_ADDRESS = "device_address";
 
@@ -29,20 +29,18 @@ public class DeviceListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device_list);
 
         showPairedDevicesButton = findViewById(R.id.showPairedDevicesBtn);
-        devicelist = (ListView) findViewById(R.id.devicesListView);
-        myBluetooth = BluetoothAdapter.getDefaultAdapter();
+        deviceList = (ListView) findViewById(R.id.devicesListView);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if(myBluetooth == null)
+        if(bluetoothAdapter == null)
         {
-            //Show a mensag. that the device has no bluetooth adapter
             Toast.makeText(getApplicationContext(), "Bluetooth Device Not Available", Toast.LENGTH_LONG).show();
 
-            //finish apk
             finish();
         }
-        else if(!myBluetooth.isEnabled())
+        else if(!bluetoothAdapter.isEnabled())
         {
-            //Ask to the user turn the bluetooth on
+            // if bluetooth is off, ask user to switch it on
             Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnBTon,1);
         }
@@ -58,14 +56,15 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     private void pairedDevicesList() {
-        pairedDevices = myBluetooth.getBondedDevices();
+        pairedDevices = bluetoothAdapter.getBondedDevices();
         ArrayList devicesList = new ArrayList();
 
         if (pairedDevices.size()>0)
         {
             for(BluetoothDevice bt : pairedDevices)
             {
-                devicesList.add(bt.getName() + "\n" + bt.getAddress()); //Get the device's name and the address
+                // add to list device name and its MAC address
+                devicesList.add(bt.getName() + "\n" + bt.getAddress());
             }
         }
         else
@@ -74,37 +73,24 @@ public class DeviceListActivity extends AppCompatActivity {
         }
 
         final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, devicesList);
-        devicelist.setAdapter(adapter);
-        devicelist.setOnItemClickListener(myListClickListener); //Method called when the device from the list is clicked
+        deviceList.setAdapter(adapter);
+        // call this when device from list is clicked
+        deviceList.setOnItemClickListener(myListClickListener);
     }
 
     private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener()
     {
         public void onItemClick (AdapterView<?> av, View v, int arg2, long arg3)
         {
-            // Get the device MAC address, the last 17 chars in the View
+            // get device MAC address - last 17 characters
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
 
-            // Make an intent to start next activity.
             Intent i = new Intent(DeviceListActivity.this, ClockActivity.class);
 
-            //Change the activity.
-            i.putExtra(EXTRA_ADDRESS, address); //this will be received at ledControl (class) Activity
+            // send address to clock activity and move to it
+            i.putExtra(EXTRA_ADDRESS, address);
             startActivity(i);
         }
     };
-
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu)
-//    {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_device_list, menu);
-//        return true;
-//    }
-
-
-
-
 }

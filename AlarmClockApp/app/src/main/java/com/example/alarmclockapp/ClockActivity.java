@@ -57,7 +57,6 @@ public class ClockActivity extends AppCompatActivity {
         timeDataArduino = findViewById(R.id.timeDataArduino);
         weatherDataArduino = findViewById(R.id.weatherDataArduino);
 
-
         Intent msgIntent = getIntent();
         deviceAddress = msgIntent.getStringExtra(DeviceListActivity.EXTRA_ADDRESS);
 
@@ -94,11 +93,6 @@ public class ClockActivity extends AppCompatActivity {
     private void sendAlarmToArduino() {
         if (btSocket != null) {
             try {
-//                byte[] rawBytes = alarmToArduino.getBytes();
-//
-//                for (int i = 0; i < 10; i++) {
-//                    btSocket.getOutputStream().write(rawBytes[i]);
-//                }
                 btSocket.getOutputStream().write(alarmToArduino.getBytes());
             } catch (IOException e) {
                 Toast alarmToast = Toast.makeText(ClockActivity.this, "Didn't send information but was connected", Toast.LENGTH_SHORT);
@@ -130,8 +124,8 @@ public class ClockActivity extends AppCompatActivity {
         ConstraintSet constraints = new ConstraintSet();
         constraints.clone(constraintLayout);
         constraints.connect(alarm.getAlarmId(), ConstraintSet.TOP, R.id.scheduleAlarmBtn, ConstraintSet.BOTTOM, 0);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.BOTTOM, R.id.clockLayout, ConstraintSet.BOTTOM, 700);
-        constraints.connect(alarm.getAlarmId(), ConstraintSet.LEFT, R.id.clockLayout, ConstraintSet.LEFT, 200);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.BOTTOM, R.id.clockLayout, ConstraintSet.BOTTOM, 550);
+        constraints.connect(alarm.getAlarmId(), ConstraintSet.LEFT, R.id.clockLayout, ConstraintSet.LEFT, 220);
         constraints.connect(alarm.getAlarmId(), ConstraintSet.RIGHT, R.id.clockLayout, ConstraintSet.RIGHT, 0);
         constraints.applyTo(constraintLayout);
 
@@ -195,9 +189,9 @@ public class ClockActivity extends AppCompatActivity {
             public void run() {
                 while (!Thread.currentThread().isInterrupted() && !stopThread) {
                     try {
-                        //int byteCount = inputStream.available();
                         int byteCount = btSocket.getInputStream().available();
                         byteCount += byteCount;
+
                         if (byteCount >= 56){
                             byte[] rawBytes = new byte[byteCount];
                             byteCount = 0;
@@ -205,6 +199,7 @@ public class ClockActivity extends AppCompatActivity {
                             final String arduinoData = new String(rawBytes, "UTF-8");
                             Pattern p = Pattern.compile("(?<=a)(\\d{2}:\\d{2}:\\d{2})([ -]\\d{2})(\\d{2})(?=a)");
                             Matcher m = p.matcher(arduinoData);
+
                             while (m.find()) {
                                 String time = m.group(1);
                                 String temperature = m.group(2);
