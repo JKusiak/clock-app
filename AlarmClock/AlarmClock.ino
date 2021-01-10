@@ -8,7 +8,7 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Weather weatherStation(2);
 Clock clock(8, 7, 6);
-Alarm alarm(10, 3, 9);
+Alarm alarm(10, 3, 9, false);
 BTHC05 bthc05(11, 12);
 
 char* hour;
@@ -20,18 +20,16 @@ char* humidity;
 
 const byte interruptPin = 3;
 String alarmDataString = " 1 ";
-String currentTime = "don't start";
+String currentTime = " 2 ";
 char rc;
 char toSend[8];
-bool wasPlayed = false;
+
 
 
 void setup() {
-//  attachInterrupt(digitalPinToInterrupt(interruptPin), StopAlarm, CHANGE); 
-
   Serial.begin(9600);
   bthc05.begin(9600);
-  
+
   lcd.init();
   lcd.backlight();
   //  clock.SetTimeAndDate(sec, min, h, weekday, day, month, year);
@@ -39,46 +37,38 @@ void setup() {
 
 
 void loop() {
-  interrupts();
   clock.Update();
-  
+
   DisplayTime();
   DisplayWeather();
-
-//  lcd.setCursor(0, 0);
-//  lcd.print(alarmDataString);
-//
-//  lcd.setCursor(0, 1);
-//  lcd.print(currentTime);
+  ReceiveBluetoothData();
   
- if (bthc05.available()) {
+
+  if (currentTime == alarmDataString) {
+    StartAlarm();
+  }
+}
+
+
+void ReceiveBluetoothData() {
+  if (bthc05.available()) {
     alarmDataString = "";
+    
     while (bthc05.available() > 0) {
       rc = bthc05.read();
       alarmDataString += rc;
       Serial.write(rc);
     }
+    delay(2000);
   }
-
-  if (isAlarmTime() && wasPlayed == false) {
-    wasPlayed = true;
-    StartAlarm();
-  }
-
-  if (!isAlarmTime()) {
-    wasPlayed = false;
-  }  
 }
 
-bool isAlarmTime() {
-  return clock.ToStringAlarm() == alarmDataString;
-}
 
 void DisplayTime() {
   hour = clock.getHour();
   minute = clock.getMin();
   second = clock.getSec();
-  
+
   bthc05.write('a');
   bthc05.write(hour[0]);
   bthc05.write(hour[1]);
@@ -89,11 +79,12 @@ void DisplayTime() {
   bthc05.write(second[0]);
   bthc05.write(second[1]);
 
-//  lcd.setCursor(0, 0);
-//  lcd.print(clock.ToStringTime());
-//  lcd.setCursor(0, 1);
-//  lcd.print(clock.ToStringDate());
+  lcd.setCursor(0, 0);
+  lcd.print(clock.ToStringTime());
+  lcd.setCursor(0, 1);
+  lcd.print(clock.ToStringDate());
   
+  currentTime = clock.ToStringAlarm();
   delete[] hour;
   delete[] minute;
   delete[] second;
@@ -110,15 +101,16 @@ void DisplayWeather() {
   bthc05.write(humidity[0]);
   bthc05.write(humidity[1]);
 
-//  lcd.setCursor(10, 0);
-//  lcd.print(weatherStation.ToStringTemperature());
-//
-//  lcd.setCursor(10, 1);
-//  lcd.print(weatherStation.ToStringHumidity());
+  lcd.setCursor(10, 0);
+  lcd.print(weatherStation.ToStringTemperature());
+
+  lcd.setCursor(10, 1);
+  lcd.print(weatherStation.ToStringHumidity());
 
   delete[] temperature;
   delete[] humidity;
 }
+
 
 void StartAlarm() {
   lcd.clear();
