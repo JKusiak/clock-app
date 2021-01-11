@@ -25,7 +25,7 @@ bool wasPlayed = false;
 char rc;
 char toSend[8];
 
-String oldAlarm;
+String oldAlarm = "";
 
 void setup() {
   Serial.begin(9600);
