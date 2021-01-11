@@ -25,7 +25,7 @@ bool wasPlayed = false;
 char rc;
 char toSend[8];
 
-
+String oldAlarm;
 
 void setup() {
   Serial.begin(9600);
@@ -62,10 +62,15 @@ void ReceiveBluetoothData() {
     while (bluetoothHC05.available() > 0) {
       rc = bluetoothHC05.read();
       alarmDataString += rc;
+
+      if (oldAlarm == alarmDataString) {
+        wasPlayed = false;
+      }
       Serial.write(rc);
     }
     delay(2000);
   }
+    oldAlarm = alarmDataString;
 }
 
 
