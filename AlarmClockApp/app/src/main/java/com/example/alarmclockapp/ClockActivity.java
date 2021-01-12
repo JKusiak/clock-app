@@ -34,7 +34,7 @@ public class ClockActivity extends AppCompatActivity {
     TextView timeDataArduino;
     TextView weatherDataArduino;
 
-    BluetoothAdapter myBluetooth = null;
+    BluetoothAdapter bluetoothAdapter = null;
     BluetoothSocket btSocket = null;
     private boolean isBtConnected = false;
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -95,7 +95,8 @@ public class ClockActivity extends AppCompatActivity {
             try {
                 btSocket.getOutputStream().write(alarmToArduino.getBytes());
             } catch (IOException e) {
-                Toast alarmToast = Toast.makeText(ClockActivity.this, "Didn't send information but was connected", Toast.LENGTH_SHORT);
+                Toast alarmToast = Toast.makeText(ClockActivity.this,
+                        "Didn't send information but was connected", Toast.LENGTH_SHORT);
                 alarmToast.show();
             }
         }
@@ -156,18 +157,20 @@ public class ClockActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
+        //while the progress dialog is shown, the connection is done in background
+        protected Void doInBackground(Void... devices)
         {
             try {
                 if (btSocket == null || !isBtConnected) {
-                    myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
-                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(deviceAddress);//connects to the device's address and checks if it's available
-                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
+                    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                    BluetoothDevice myDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
+                    // create a RFCOMM (SPP) connection
+                    btSocket = myDevice.createInsecureRfcommSocketToServiceRecord(myUUID);
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    btSocket.connect();//start connection
+                    btSocket.connect();
                 }
             } catch (IOException e) {
-                ConnectSuccess = false;//if the try failed, you can check the exception here
+                ConnectSuccess = false;
                 Toast alarmToast = Toast.makeText(ClockActivity.this, "Failed to connect", Toast.LENGTH_SHORT);
                 alarmToast.show();
             }

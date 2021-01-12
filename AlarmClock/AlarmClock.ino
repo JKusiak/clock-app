@@ -62,11 +62,13 @@ void ReceiveBluetoothData() {
     while (bluetoothHC05.available() > 0) {
       rc = bluetoothHC05.read();
       alarmDataString += rc;
-
-      if (oldAlarm == alarmDataString) {
+      Serial.print(rc);
+    }
+    
+    if (oldAlarm == alarmDataString) {
         wasPlayed = false;
-      }
-      Serial.write(rc);
+        alarm.isStopped = false;
+        digitalWrite(3, HIGH);
     }
     delay(2000);
   }
